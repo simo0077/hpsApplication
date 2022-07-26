@@ -1,12 +1,15 @@
 package login_app.login_app.service;
 
+import login_app.login_app.domaine.LdapUser;
 import login_app.login_app.domaine.Role;
 import login_app.login_app.domaine.User;
+import login_app.login_app.repository.LdapUserRepo;
 import login_app.login_app.repository.RoleRepo;
 import login_app.login_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.lang.model.element.Name;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +28,7 @@ public class UserService implements UserServiceInterface, UserDetailsService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final LdapUserRepo ldapUserRepo;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,7 +48,9 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     }
     @Override
     public User saveUser(User user) {
+
         log.info("saving new user {} to database", user.getName());
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }

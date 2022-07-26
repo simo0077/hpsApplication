@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -24,9 +25,21 @@ import static org.springframework.http.HttpMethod.GET;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+
+
+        auth
+                .ldapAuthentication()
+                .userDnPatterns("uid={0},ou=people")
+                .groupSearchBase("ou=groups")
+                .contextSource()
+                .url("ldap://localhost:8389/dc=springframework,dc=org")
+                .and()
+                .passwordCompare()
+                .passwordEncoder(new BCryptPasswordEncoder())
+                .passwordAttribute("userPassword");
     }
 
     @Override
@@ -47,4 +60,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
 }
