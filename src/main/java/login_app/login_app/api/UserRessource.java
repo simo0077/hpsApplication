@@ -10,6 +10,7 @@ import login_app.login_app.domaine.User;
 import login_app.login_app.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,6 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Slf4j
 public class UserRessource {
     private final UserService userService;
 
@@ -37,11 +39,7 @@ public class UserRessource {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
-    @PostMapping("/user/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user){
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveUser(user));
-    }
+
 
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role){
@@ -65,6 +63,7 @@ public class UserRessource {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();
+                log.info("the username is {}:", username);
                 User user  = userService.getUser(username);
                 String access_token = JWT.create()
                         .withSubject(user.getUsername())
