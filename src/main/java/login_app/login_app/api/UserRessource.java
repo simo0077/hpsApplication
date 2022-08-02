@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import login_app.login_app.domaine.Groupe;
 import login_app.login_app.domaine.Role;
 import login_app.login_app.domaine.User;
 import login_app.login_app.service.UserService;
@@ -50,6 +51,17 @@ public class UserRessource {
     @PostMapping("/role/addtouser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form){
         userService.addRoleToUser(form.getUsername(),form.getUsername());
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/group/save")
+    public ResponseEntity<Groupe> saveGroup(@RequestBody Groupe group){
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/group/save").toUriString());
+        return ResponseEntity.created(uri).body(userService.saveGroup(group));
+    }
+
+    @PostMapping("/group/addtouser")
+    public ResponseEntity<?> addGroupToUser(@RequestBody GroupToUserForm form){
+        userService.addGroupToUser(form.getUsername(),form.getGroupName());
         return ResponseEntity.ok().build();
     }
 
@@ -101,4 +113,10 @@ public class UserRessource {
 class RoleToUserForm {
     private String username;
     private String roleName;
+}
+
+@Data
+class GroupToUserForm {
+    private String username;
+    private String groupName;
 }

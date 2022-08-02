@@ -1,7 +1,9 @@
 package login_app.login_app.service;
 
+import login_app.login_app.domaine.Groupe;
 import login_app.login_app.domaine.Role;
 import login_app.login_app.domaine.User;
+import login_app.login_app.repository.GroupeRepo;
 import login_app.login_app.repository.RoleRepo;
 import login_app.login_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class UserService implements UserServiceInterface, UserDetailsService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final GroupeRepo groupeRepo;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -56,6 +59,13 @@ public class UserService implements UserServiceInterface, UserDetailsService {
 
         return roleRepo.save(role);
     }
+    @Override
+    public Groupe saveGroup(Groupe group) {
+        log.info("saving new group {} to database",group.getName());
+
+        return groupeRepo.save(group);
+    }
+
 
     @Override
     public void addRoleToUser(String username, String roleName) {
@@ -65,6 +75,13 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         user.getRoles().add(role);
     }
 
+    @Override
+    public void addGroupToUser(String username, String groupName) {
+        log.info("adding group {} to user {}",username,groupName);
+        User user = userRepo.findByUsername(username);
+        Groupe groupe = groupeRepo.findByName(groupName);
+        user.getGroups().add(groupe);
+    }
     @Override
     public User getUser(String username) {
         log.info("getting a user {}", username);
@@ -76,6 +93,7 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         log.info("getting all users");
         return userRepo.findAll();
     }
+
 
 
 }
