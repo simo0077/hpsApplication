@@ -4,6 +4,7 @@ import login_app.login_app.domaine.Groupe;
 import login_app.login_app.domaine.Role;
 import login_app.login_app.domaine.User;
 
+import javax.naming.NamingException;
 import java.util.List;
 
 public interface UserServiceInterface {
@@ -14,5 +15,5 @@ public interface UserServiceInterface {
     void addGroupToUser(String username,String groupName);
     User getUser(String username);
 
-    List<User> getUsers();
+    List<User> getUsers() throws NamingException;
 }

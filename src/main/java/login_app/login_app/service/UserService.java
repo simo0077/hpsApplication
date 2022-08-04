@@ -15,41 +15,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.NamingException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
-public class UserService implements UserServiceInterface, UserDetailsService {
+public class UserService implements UserServiceInterface {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
     private final GroupeRepo groupeRepo;
+    private final LdapService ldapService;
 
-    private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username);
-        if(user == null){
-            log.error("user not found in the database");
-            throw new UsernameNotFoundException("user not found in the database");
-        }else{
-            log.info("user {} found in the database", username);
-        }
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),authorities);
-    }
+
+
+
     @Override
     public User saveUser(User user) {
 
         log.info("saving new user {} to database", user.getName());
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -89,9 +76,20 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getUsers() throws NamingException {
         log.info("getting all users");
-        return userRepo.findAll();
+        List<User> users=  userRepo.findAll();
+        users.forEach(user ->{
+            try {
+                List<String> ldapGroups = ldapService.getLdapGroups(user.getUsername());
+                    user.setLdapGroups(ldapGroups);
+
+            } catch (NamingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return users;
+
     }
 
 

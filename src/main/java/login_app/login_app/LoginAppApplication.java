@@ -20,10 +20,7 @@ public class LoginAppApplication {
 		SpringApplication.run(LoginAppApplication.class, args);
 	}
 
-	@Bean
-	PasswordEncoder passwordEncoder(){
-		return new BCryptPasswordEncoder();
-	}
+
 
 	@Bean
 	CommandLineRunner run(UserService userService){
@@ -33,11 +30,11 @@ public class LoginAppApplication {
 			userService.saveGroup(new Groupe(null,"group1"));
 			userService.saveGroup(new Groupe(null,"group2"));
 
-			userService.saveUser(new User(null,"ben","ben","benpassword",new ArrayList<>(),new ArrayList<>()));
-			userService.saveUser(new User(null,"user2","user2","1234",new ArrayList<>(),new ArrayList<>()));
+			userService.saveUser(new User(null,"ben","ben",new ArrayList<>(),new ArrayList<>(),new ArrayList<>()));
+			userService.saveUser(new User(null,"alex","alex",new ArrayList<>(),new ArrayList<>(),new ArrayList<>()));
 
 			userService.addRoleToUser("ben","ROLE_ADMIN");
-			userService.addRoleToUser("user2","ROLE_USER");
+			userService.addRoleToUser("alex","ROLE_USER");
 			userService.addGroupToUser("ben","group1");
 			userService.addGroupToUser("ben","group2");
 

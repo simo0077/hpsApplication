@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,10 +21,13 @@ public class User {
     private Long id;
     private String name;
     private String username;
-    private String password;
+    @ElementCollection
+    private Collection<String> ldapGroups;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY)
     private Collection<Groupe> groups = new ArrayList<>();
 
+
 }
+
