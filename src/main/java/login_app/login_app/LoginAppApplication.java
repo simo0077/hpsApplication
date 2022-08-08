@@ -34,6 +34,7 @@ public class LoginAppApplication {
 			userService.saveUser(new User(null,"alex","alex",new ArrayList<>(),new ArrayList<>(),new ArrayList<>()));
 
 			userService.addRoleToUser("ben","ROLE_ADMIN");
+			userService.addRoleToUser("ben","ROLE_USER");
 			userService.addRoleToUser("alex","ROLE_USER");
 			userService.addGroupToUser("ben","group1");
 			userService.addGroupToUser("ben","group2");

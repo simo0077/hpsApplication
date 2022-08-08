@@ -33,6 +33,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
+
+
 public class UserRessource {
     private final UserService userService;
 
